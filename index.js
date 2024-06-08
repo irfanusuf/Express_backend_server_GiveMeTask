@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const {getIndex , getUser , addUser} = require("./handlers/handler");
+const {getIndex , getUser , addUser, deleteUser, EditUser} = require("./handlers/handler");
 const connectDb =  require ("./utility/connectDb")
 const port = 4000;
 
@@ -17,11 +17,16 @@ app.use(express.json());
 
 
 app.get("/", getIndex);
-app.get('/user', getUser)
 
-
-
+// CRUD OPERATION ON USER OBJECT
 app.post('/user/create' , addUser)
+app.get('/user/:userId', getUser)
+app.delete('/user/:userId', deleteUser)
+app.put('/user/:userId', EditUser)
+
+
+
+
 
 
 app.listen(port, () => {
