@@ -1,34 +1,17 @@
-const express = require("express");
-const path = require("path");
-const {getIndex , getUser , addUser, deleteUser, EditUser} = require("./handlers/handler");
-const connectDb =  require ("./utility/connectDb")
-const port = 4000;
+const express = require("express")
+const cors = require("cors")
+const port = 5000
 
 
+const server = express()
 
-const app = express();
-connectDb()
-
-
-
-//middlewares
-app.use(express.static(path.join(__dirname, "public"))); // serving static files to browser
-app.use(express.json());
+server.use(cors())     // middle ware
 
 
-app.get("/", getIndex);
-
-// CRUD OPERATION ON USER OBJECT
-app.post('/user/create' , addUser)
-app.get('/user/:userId', getUser)
-app.delete('/user/:userId', deleteUser)
-app.put('/user/:userId', EditUser)
+server.get("/getUser" , (req,res)=>{res.json({message : "no user Found ,, kel milte hai "})})
 
 
 
 
 
-
-app.listen(port, () => {
-  return console.log(`server Listenting on port ${port}`);
-});
+server.listen(port , ()=>{console.log(`Server started on port ${port} !`)})
