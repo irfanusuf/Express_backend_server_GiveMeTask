@@ -1,17 +1,27 @@
-const express = require("express")
-const cors = require("cors")
-const port = 5000
+const express = require("express");
+const cors = require("cors");
+const connectDb = require("./utils/connectDb");
+const { handleSignUp, handleLogin } = require("./controllers/userController");
+
+const port = 5000;
+
+// you are creating an instance of express
+
+const server = express(); // inheritance
+
+connectDb();
+
+server.use(cors()); // middle ware
+server.use(express.json())
 
 
-const server = express()
+// routes
 
-server.use(cors())     // middle ware
+server.get("/" , (req,res)=>{res.send("Hello server is working!")})
 
+server.post("/user/signup" , handleSignUp )
+server.post("/user/login" , handleLogin )
 
-server.get("/getUser" , (req,res)=>{res.json({message : "no user Found ,, kel milte hai "})})
-
-
-
-
-
-server.listen(port , ()=>{console.log(`Server started on port ${port} !`)})
+server.listen(port, () => {
+  console.log(`Server started on port ${port} !`);
+});
