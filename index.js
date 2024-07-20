@@ -2,8 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const connectDb = require("./utils/connectDb");
 const { handleSignUp, handleLogin } = require("./controllers/userController");
+const bodyParser = require("body-parser");
 
-const port = 5000;
+const port = 4000;
 
 // you are creating an instance of express
 
@@ -12,7 +13,8 @@ const server = express(); // inheritance
 connectDb();
 
 server.use(cors()); // middle ware
-server.use(express.json())
+// server.use(express.json())  // json parsing
+server.use(bodyParser.json())
 
 
 // routes
