@@ -24,7 +24,7 @@ const handleSignUp = async (req, res) => {
           password: hashpass,
         });
         if (newUser) {
-          res.json({ message: "User Saved Succesfully " });
+          res.json({ message: "User Saved Succesfully" });
         } else {
           res.json({ message: "Some Error" });
         }
@@ -72,17 +72,16 @@ const handleLogin = async (req, res) => {
 
 const handleDelete = async (req, res) => {
   try {
-    const _id = req.query._id;
+    const { _id } = req.params;
 
-    console.log(_id);
-
-    const checkUser = await User.findById(_id);
-
-    if (checkUser) {
-      await User.findByIdAndDelete(_id);
-      messagehandler(res, 200, "User deleted Succesfully");
-    } else {
-      messagehandler(res, 200, "User not found");
+    if (_id) {
+      const checkUser = await User.findById(_id);
+      if (checkUser) {
+        await User.findByIdAndDelete(_id);
+        messagehandler(res, 200, "User deleted Succesfully");
+      } else {
+        messagehandler(res, 200, "User not found");
+      }
     }
   } catch (error) {
     console.log(error);
@@ -90,11 +89,45 @@ const handleDelete = async (req, res) => {
 };
 
 const handleEdit = async (req, res) => {
-  console.log("i m working  i m in login");
+  try {
+
+    const {username , email , password} = req.body
+    const _id = req.params
+    if(_id ==="" || !_id){
+      messagehandler(res , 400 , "No ID passed from params")
+    }
+
+    const findUser = await User.findById(_id)
+    if(!findUser){
+      messagehandler(res , 404 , "User not Found!")
+    }
+    const hashPass =  await bcrypt.hash(password , 10)
+    const editUser = await User.findByIdAndUpdate({email , username , password : hashPass})
+
+    if(editUser){
+      messagehandler(res , 201 , "User details Updated Succesfully!")
+    }
+    else{
+      messagehandler(res , 405 , "Some Error!")
+    }
+
+    
+  } catch (error) {
+    console.log(error)
+    
+  }
 };
 
 const handleGetUser = async (req, res) => {
-  console.log("i m working  i m in login");
+  try {
+    const { _id } = req.params;
+    if (_id) {
+      const getUser = await User.findById(_id);
+      res.json({ message: "User data fetched Succesfully", getUser });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = {

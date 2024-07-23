@@ -22,9 +22,9 @@ server.use(bodyParser.json())
 server.get("/" , (req,res)=>{res.send("Hello server is working!")})
 server.post("/user/signup" , handleSignUp )
 server.post("/user/login" , handleLogin )
-server.delete("/user/delete" , handleDelete )
-server.put("/user/edit" , handleEdit )
-server.post("/user/userDetails" , handleGetUser )
+server.delete("/user/delete/:_id" , handleDelete )
+server.put("/user/edit/:_id" , handleEdit )
+server.get("/user/userDetails/:_id" , handleGetUser )
 
 
 
