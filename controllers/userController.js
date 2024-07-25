@@ -15,7 +15,7 @@ const handleSignUp = async (req, res) => {
       const findUser = await User.findOne({ email });
 
       if (findUser) {
-        res.json({ message: "User Already Registered" });
+        res.json({ message: "User Already Exists!" });
       } else {
         const hashpass = await bcrypt.hash(password, 10);
         const newUser = await User.create({
@@ -30,7 +30,7 @@ const handleSignUp = async (req, res) => {
         }
       }
     } else {
-      res.json({ message: "No credentials " });
+      res.json({ message: "All user credentials Required" });
     }
   } catch (error) {
     console.log(error);
@@ -41,21 +41,20 @@ const handleSignUp = async (req, res) => {
 const handleLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     if (email === "" || password === "") {
-      return messagehandler(res, 400, "All credentails Required!");
+      return messagehandler(res, 202, "All credentails Required!");
     }
 
     const existingUser = await User.findOne({ email });
 
     if (!existingUser) {
-      return messagehandler(res, 400, "No user Found");
+      return messagehandler(res, 202, "No user Found");
     }
 
     const checkpass = await bcrypt.compare(password, existingUser.password);
 
     if (!checkpass) {
-      return messagehandler(res, 400, "Password Incorrect");
+      return messagehandler(res, 202, "Password Incorrect");
     }
 
     const payload = existingUser._id;
@@ -63,9 +62,12 @@ const handleLogin = async (req, res) => {
     const createToken = await jwt.sign({ _id: payload }, "thisismysecretkey");
 
     if (createToken) {
-      res.json({ message: "user loggin success", token: createToken });
+      res
+        .status(200)
+        .json({ message: "user loggin success", token: createToken });
     }
   } catch (error) {
+    messagehandler(res, 500, "Server Error");
     console.log(error);
   }
 };
@@ -78,7 +80,7 @@ const handleDelete = async (req, res) => {
       const checkUser = await User.findById(_id);
       if (checkUser) {
         await User.findByIdAndDelete(_id);
-        messagehandler(res, 200, "User deleted Succesfully");
+        messagehandler(res, 201, "User deleted Succesfully");
       } else {
         messagehandler(res, 200, "User not found");
       }
@@ -90,40 +92,41 @@ const handleDelete = async (req, res) => {
 
 const handleEdit = async (req, res) => {
   try {
-
-    const {username , email , password} = req.body
-    const _id = req.params
-    if(_id ==="" || !_id){
-      messagehandler(res , 400 , "No ID passed from params")
+    const { username, email, password } = req.body;
+    const _id = req.params;
+    if (_id === "" || !_id) {
+      messagehandler(res, 400, "No ID passed from params");
     }
 
-    const findUser = await User.findById(_id)
-    if(!findUser){
-      messagehandler(res , 404 , "User not Found!")
+    const findUser = await User.findById(_id);
+    if (!findUser) {
+      messagehandler(res, 200, "User not Found!");
     }
-    const hashPass =  await bcrypt.hash(password , 10)
-    const editUser = await User.findByIdAndUpdate({email , username , password : hashPass})
+    const hashPass = await bcrypt.hash(password, 10);
+    const editUser = await User.findByIdAndUpdate({
+      email,
+      username,
+      password: hashPass,
+    });
 
-    if(editUser){
-      messagehandler(res , 201 , "User details Updated Succesfully!")
+    if (editUser) {
+      messagehandler(res, 201, "User details Updated Succesfully!");
+    } else {
+      messagehandler(res, 200, "Some Error!");
     }
-    else{
-      messagehandler(res , 405 , "Some Error!")
-    }
-
-    
   } catch (error) {
-    console.log(error)
-    
+    console.log(error);
   }
 };
 
 const handleGetUser = async (req, res) => {
   try {
-    const { _id } = req.params;
+    const { _id } = req.info;
     if (_id) {
       const getUser = await User.findById(_id);
-      res.json({ message: "User data fetched Succesfully", getUser });
+      res
+        .status(200)
+        .json({ message: "User data fetched Succesfully", getUser });
     }
   } catch (error) {
     console.log(error);

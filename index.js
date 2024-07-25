@@ -3,6 +3,7 @@ const cors = require("cors");
 const connectDb = require("./utils/connectDb");
 const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser} = require("./controllers/userController");
 const bodyParser = require("body-parser");
+const checkauth =require("./utils/auth")
 
 const port = 4000;
  
@@ -24,7 +25,7 @@ server.post("/user/signup" , handleSignUp )
 server.post("/user/login" , handleLogin )
 server.delete("/user/delete/:_id" , handleDelete )
 server.put("/user/edit/:_id" , handleEdit )
-server.get("/user/userDetails/:_id" , handleGetUser )
+server.get("/user/userDetails/:token", checkauth,  handleGetUser )
 
 
 
