@@ -3,9 +3,12 @@ const cors = require("cors");
 const connectDb = require("./utils/connectDb");
 const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser} = require("./controllers/userController");
 const bodyParser = require("body-parser");
-const checkauth =require("./utils/auth")
+const verifyUser = require("./controllers/userVerification");
+const { config } = require("dotenv");
+config("/.env")
 
-const port = 4000;
+
+const port = process.env.PORT;
  
 // you are creating an instance of express
 
@@ -25,7 +28,10 @@ server.post("/user/signup" , handleSignUp )
 server.post("/user/login" , handleLogin )
 server.delete("/user/delete/:_id" , handleDelete )
 server.put("/user/edit/:_id" , handleEdit )
-server.get("/user/userDetails/:token", checkauth,  handleGetUser )
+server.get("/user/userDetails/:_id", handleGetUser )
+
+
+server.get("/token/verify/:token", verifyUser )
 
 
 

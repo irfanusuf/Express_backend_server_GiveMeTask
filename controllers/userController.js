@@ -2,6 +2,8 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { messagehandler } = require("../utils/utils");
 const jwt = require("jsonwebtoken");
+const { config } = require("dotenv");
+config("/.env");
 
 const handleSignUp = async (req, res) => {
   // const username =  req.body.username
@@ -40,7 +42,9 @@ const handleSignUp = async (req, res) => {
 
 const handleLogin = async (req, res) => {
   try {
+    const secretkey = process.env.SECRET_KEY
     const { email, password } = req.body;
+
     if (email === "" || password === "") {
       return messagehandler(res, 202, "All credentails Required!");
     }
@@ -59,15 +63,13 @@ const handleLogin = async (req, res) => {
 
     const payload = existingUser._id;
 
-    const createToken = await jwt.sign({ _id: payload }, "thisismysecretkey");
+    const createToken = await jwt.sign({ _id: payload }, secretkey);
 
     if (createToken) {
-      res
-        .status(200)
-        .json({ message: "user loggin success", token: createToken });
+      res.status(200).json({ message: "user loggin success", token: createToken });
     }
   } catch (error) {
-    messagehandler(res, 500, "Server Error");
+    messagehandler(res , 500 , "Server Error")
     console.log(error);
   }
 };
@@ -121,12 +123,10 @@ const handleEdit = async (req, res) => {
 
 const handleGetUser = async (req, res) => {
   try {
-    const { _id } = req.info;
+    const { _id } = req.params;
     if (_id) {
       const getUser = await User.findById(_id);
-      res
-        .status(200)
-        .json({ message: "User data fetched Succesfully", getUser });
+      res.status(200).json({ message: "User data fetched Succesfully", getUser });
     }
   } catch (error) {
     console.log(error);
