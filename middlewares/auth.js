@@ -3,22 +3,26 @@ const { config } = require("dotenv");
 const { messagehandler } = require("../utils/utils");
 config("/.env");
 
-const verifyUser = (req, res) => {
+
+const isAuthenticated = (req, res, next) => {
   try {
-    const secretKey = process.env.SECRET_KEY;
     const { token } = req.params;
+    const secretKey = process.env.SECRET_KEY;
 
     jwt.verify(token, secretKey, (error, decode) => {
       if (error) {
-        messagehandler(res, 200 , "tokenNotVerfied");
+        messagehandler(res, 401, "unauthorised");
       } else {
-        res.json({ message: "verified", decode });
+        
+        req.user = decode._id;
+
+        // console.log(req.user)
+        return next();
       }
     });
-
   } catch (error) {
     console.log(error);
   }
 };
 
-module.exports = verifyUser;
+module.exports = isAuthenticated;
