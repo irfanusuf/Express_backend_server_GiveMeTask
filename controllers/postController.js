@@ -20,11 +20,11 @@ const handleCreatePost = async (req, res) => {
     }
 
     const author = user.username;
-    const { title } = req.body; // body object is added to req param by multer
+    const { title ,description } = req.body; // body object is added to req param by multer
     const image = req.file.path; // file object is added to req param by multer
 
-    if (title === "" || !image) {
-      return messagehandler(res, 203, "Title and image is Required");
+    if (title === "" || description === "" || !image) {
+      return messagehandler(res, 203, "All Data feilds Required");
     }
 
     const upload = await cloudinary.uploader.upload(image);
@@ -37,7 +37,7 @@ const handleCreatePost = async (req, res) => {
 
     const imageUrl = upload.secure_url;
 
-    const newPost = await Post.create({ title, imageUrl, author });
+    const newPost = await Post.create({ title, imageUrl, author , description });
     if (newPost) {
       return messagehandler(res, 201, "Post created Succesfully");
     }
@@ -48,9 +48,9 @@ const handleCreatePost = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find().lean();
+    const posts = await Post.find();
     if (posts) {
-      res.json({ success: true, message: "posts fetched succesfully", posts });
+      res.json({success: true, message: "Posts fetched succesfully!", posts: posts});
     } else {
       messagehandler(res, 404, "Posts not Found!");
     }

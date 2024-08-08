@@ -39,6 +39,9 @@ server.delete("/user/delete/:token" ,isAuthenticated, handleDelete )
 server.put("/user/edit/:token" ,isAuthenticated, handleEdit )
 server.get("/user/userDetails/:token",isAuthenticated, handleGetUser )
 
+
+
+
 // api routes for post
 
 
@@ -48,7 +51,7 @@ server.delete("/post/delete/:token/:_id",isAuthenticated, handleDeletePost )
 
 
 
-// server.post("/post/delet",isAuthenticated, handleCreatePost )
+
 
 
 
