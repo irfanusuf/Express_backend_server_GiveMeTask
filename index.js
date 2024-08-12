@@ -37,7 +37,9 @@ server.post("/user/login" , handleLogin )
 //user authenticated Routes
 server.delete("/user/delete/:token" ,isAuthenticated, handleDelete )
 server.put("/user/edit/:token" ,isAuthenticated, handleEdit )
-server.get("/user/userDetails/:token",isAuthenticated, handleGetUser )
+
+
+server.get("/user/getUser/:token",isAuthenticated, handleGetUser )
 
 
 
@@ -46,7 +48,7 @@ server.get("/user/userDetails/:token",isAuthenticated, handleGetUser )
 
 
 server.post("/post/createPost/:token",isAuthenticated, multmid, handleCreatePost )
-server.get("/post/getAll/:token",isAuthenticated, getAllPosts )
+server.get("/post/getAll", getAllPosts )
 server.delete("/post/delete/:token/:_id",isAuthenticated, handleDeletePost )
 
 

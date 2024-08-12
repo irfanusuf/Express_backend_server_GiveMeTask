@@ -79,7 +79,7 @@ const handleLogin = async (req, res) => {
 
 const handleDelete = async (req, res) => {
   try {
-    const { _id } = req.user;
+    const  _id  = req.user;
 
     if (_id) {
       const checkUser = await User.findById(_id);
@@ -126,14 +126,19 @@ const handleEdit = async (req, res) => {
 
 const handleGetUser = async (req, res) => {
   try {
-    const { _id } = req.user;
+    const _id  = req.user;
+    console.log(_id)
     if (_id) {
-      const getUser = await User.findById(_id);
+      const user = await User.findById(_id);
+      const email =user.email
       res
         .status(200)
-        .json({ message: "User data fetched Succesfully", getUser });
+        .json({ message: "User data fetched Succesfully", email });
+    }else{
+      res.json({ message: "No User Data Found!" });
     }
   } catch (error) {
+    res.json({message : "Server Error"})
     console.log(error);
   }
 };

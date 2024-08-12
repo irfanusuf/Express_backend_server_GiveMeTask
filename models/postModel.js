@@ -7,7 +7,7 @@ const Post = mongoose.model("Post" , {
 title : String,
 imageUrl : String,
 author : String,
-description : String,
+content : String,
 comments : [],
 likes : [],
 dislike : [],

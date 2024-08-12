@@ -20,10 +20,10 @@ const handleCreatePost = async (req, res) => {
     }
 
     const author = user.username;
-    const { title ,description } = req.body; // body object is added to req param by multer
+    const { title ,content } = req.body; // body object is added to req param by multer
     const image = req.file.path; // file object is added to req param by multer
 
-    if (title === "" || description === "" || !image) {
+    if (title === "" || content === "" || !image) {
       return messagehandler(res, 203, "All Data feilds Required");
     }
 
@@ -37,9 +37,9 @@ const handleCreatePost = async (req, res) => {
 
     const imageUrl = upload.secure_url;
 
-    const newPost = await Post.create({ title, imageUrl, author , description });
+    const newPost = await Post.create({ title, imageUrl, author , content });
     if (newPost) {
-      return messagehandler(res, 201, "Post created Succesfully");
+      return messagehandler(res, 201, "Post created Succesfully!");
     }
   } catch (error) {
     console.log(error);
