@@ -5,9 +5,9 @@ const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser} = 
 const {handleCreatePost, getAllPosts, handleDeletePost} = require("./controllers/postController");
 const bodyParser = require("body-parser");
 const verifyUser = require("./controllers/userVerification");
-const { config } = require("dotenv");
 const isAuthenticated = require("./middlewares/auth");
 const multmid = require("./middlewares/multer");
+const { config } = require("dotenv");
 config("/.env")
 
 
