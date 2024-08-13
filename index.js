@@ -3,11 +3,13 @@ const cors = require("cors");
 const connectDb = require("./utils/connectDb");
 const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser} = require("./controllers/userController");
 const {handleCreatePost, getAllPosts, handleDeletePost} = require("./controllers/postController");
+const { uploadFile } = require("./controllers/uploadController");
 const bodyParser = require("body-parser");
 const verifyUser = require("./controllers/userVerification");
 const isAuthenticated = require("./middlewares/auth");
 const multmid = require("./middlewares/multer");
 const { config } = require("dotenv");
+
 config("/.env")
 
 
@@ -37,8 +39,6 @@ server.post("/user/login" , handleLogin )
 //user authenticated Routes
 server.delete("/user/delete/:token" ,isAuthenticated, handleDelete )
 server.put("/user/edit/:token" ,isAuthenticated, handleEdit )
-
-
 server.get("/user/getUser/:token",isAuthenticated, handleGetUser )
 
 
@@ -48,9 +48,9 @@ server.get("/user/getUser/:token",isAuthenticated, handleGetUser )
 
 
 server.post("/post/createPost/:token",isAuthenticated, multmid, handleCreatePost )
+server.post("/post/upload/image", multmid, uploadFile )
 server.get("/post/getAll", getAllPosts )
 server.delete("/post/delete/:token/:_id",isAuthenticated, handleDeletePost )
-
 
 
 
