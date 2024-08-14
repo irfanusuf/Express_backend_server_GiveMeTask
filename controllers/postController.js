@@ -20,7 +20,7 @@ const handleCreatePost = async (req, res) => {
     }
 
     const author = user.username;
-    const { title ,content } = req.body; // body object is added to req param by multer
+    const { title, content } = req.body; // body object is added to req param by multer
     const image = req.file.path; // file object is added to req param by multer
 
     if (title === "" || content === "" || !image) {
@@ -37,7 +37,7 @@ const handleCreatePost = async (req, res) => {
 
     const imageUrl = upload.secure_url;
 
-    const newPost = await Post.create({ title, imageUrl, author , content });
+    const newPost = await Post.create({ title, imageUrl, author, content });
     if (newPost) {
       return messagehandler(res, 201, "Post created Succesfully!");
     }
@@ -50,7 +50,11 @@ const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find();
     if (posts) {
-      res.json({success: true, message: "Posts fetched succesfully!", posts: posts});
+      res.json({
+        success: true,
+        message: "Posts fetched succesfully!",
+        posts: posts,
+      });
     } else {
       messagehandler(res, 404, "Posts not Found!");
     }
@@ -59,17 +63,26 @@ const getAllPosts = async (req, res) => {
   }
 };
 
+const getPost = async (req, res) => {
+  try {
+    const { _id } = req.params;
 
-const handleDeletePost = async(req,res) =>{
-try {
+    const post = await Post.findById(_id);
+    if (post) {
+      res.json({ message: "Post!", post: post });
+    } else {
+      messagehandler(res, 404, "Post not Found!");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-  const _id = req.params
-  const delPost = await Post.findByIdAndDelete(_id)
-  
-} catch (error) {
-  
-}
+const handleDeletePost = async (req, res) => {
+  try {
+    const _id = req.params;
+    const delPost = await Post.findByIdAndDelete(_id);
+  } catch (error) {}
+};
 
-}
-
-module.exports = { handleCreatePost , getAllPosts , handleDeletePost};
+module.exports = { handleCreatePost, getAllPosts, handleDeletePost, getPost };

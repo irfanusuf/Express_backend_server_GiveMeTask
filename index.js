@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDb = require("./utils/connectDb");
 const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser} = require("./controllers/userController");
-const {handleCreatePost, getAllPosts, handleDeletePost} = require("./controllers/postController");
+const {handleCreatePost, getAllPosts, handleDeletePost, getPost} = require("./controllers/postController");
 const { uploadFile } = require("./controllers/uploadController");
 const bodyParser = require("body-parser");
 const verifyUser = require("./controllers/userVerification");
@@ -50,6 +50,7 @@ server.get("/user/getUser/:token",isAuthenticated, handleGetUser )
 server.post("/post/createPost/:token",isAuthenticated, multmid, handleCreatePost )
 server.post("/post/upload/image", multmid, uploadFile )
 server.get("/post/getAll", getAllPosts )
+server.get("/post/get/:_id", getPost )
 server.delete("/post/delete/:token/:_id",isAuthenticated, handleDeletePost )
 
 
