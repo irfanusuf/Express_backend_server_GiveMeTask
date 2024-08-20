@@ -1,18 +1,22 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const User = require("./userModel");
 
+const Post = mongoose.model("Post", {
+  title: String,
+  imageUrl: String,
+  author: String,
+  content: String,
+  comments: [
+    {
+      comment: {
+        type: String,
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      },
+    },
+  ],
+  likes: [{ type: String} ],
+  dislike: [],
+  share: [],
+});
 
-
-const Post = mongoose.model("Post" , {
-
-title : String,
-imageUrl : String,
-author : String,
-content : String,
-comments : [],
-likes : [],
-dislike : [],
-share : []
-
-})
-
-module.exports = Post
+module.exports = Post;

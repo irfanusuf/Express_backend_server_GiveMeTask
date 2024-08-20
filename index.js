@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const cookie = require("cookie-parser")
 const connectDb = require("./utils/connectDb");
 const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser} = require("./controllers/userController");
-const {handleCreatePost, getAllPosts, handleDeletePost, getPost} = require("./controllers/postController");
+const {handleCreatePost, getAllPosts, handleDeletePost, getPost, handleLike} = require("./controllers/postController");
 const { uploadFile } = require("./controllers/uploadController");
 const bodyParser = require("body-parser");
 const verifyUser = require("./controllers/userVerification");
@@ -24,6 +25,7 @@ connectDb();
 server.use(cors()); // middle ware
 // server.use(express.json())  // json parsing
 server.use(bodyParser.json())
+server.use(cookie())
 
 
 // api route for verifying token
@@ -48,9 +50,16 @@ server.get("/user/getUser/:token",isAuthenticated, handleGetUser )
 
 
 server.post("/post/createPost/:token",isAuthenticated, multmid, handleCreatePost )
+
 server.post("/post/upload/image", multmid, uploadFile )
+
 server.get("/post/getAll", getAllPosts )
+
 server.get("/post/get/:_id", getPost )
+
+server.put("/post/pushLike/:_id/:token", isAuthenticated , handleLike )
+
+
 server.delete("/post/delete/:token/:_id",isAuthenticated, handleDeletePost )
 
 

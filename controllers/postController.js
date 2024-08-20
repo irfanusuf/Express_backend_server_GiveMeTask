@@ -85,4 +85,43 @@ const handleDeletePost = async (req, res) => {
   } catch (error) {}
 };
 
-module.exports = { handleCreatePost, getAllPosts, handleDeletePost, getPost };
+const handleLike = async (req, res) => {
+  try {
+    const userId = req.user;
+    const { _id } = req.params;
+    const post = await Post.findById(_id);
+
+    const likeArr = post.likes;
+
+    const alreadyLiked = likeArr.includes(userId);
+
+    if (!post) {
+      return messagehandler(res, 404, "Post Not Found!");
+    }
+
+    if (alreadyLiked) {
+      await Post.findByIdAndUpdate(_id, {
+        $pull: {
+          likes: userId,
+        },
+      });
+      return messagehandler(res, 200, "Like Removed !");
+    } else {
+      await Post.findByIdAndUpdate(_id, {
+        $push: { likes: userId },
+      });
+
+      return messagehandler(res, 201, "U Liked Succesfully!");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  handleCreatePost,
+  getAllPosts,
+  handleDeletePost,
+  getPost,
+  handleLike,
+};
