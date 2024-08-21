@@ -66,8 +66,14 @@ const handleLogin = async (req, res) => {
     const token = await jwt.sign({ _id: payload }, secretkey);
 
     if (token) {
-    res.cookie("token" , token )
-  //  {HttpOnly :true , secure :true , expiry : "1h"}
+    res.cookie("token" , token , {
+      httpOnly: true,  
+      secure: false,  
+      sameSite: 'Lax',
+      maxAge: 60* 60 * 60 * 1000,
+      path: '/'
+    } )
+
       res
         .status(200)
         .json({ message: "user loggin success" });
