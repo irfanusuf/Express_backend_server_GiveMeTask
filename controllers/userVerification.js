@@ -6,7 +6,7 @@ config("/.env");
 const verifyUser = (req, res) => {
   try {
     const secretKey = process.env.SECRET_KEY;
-    const { token } = req.params;
+    const { token } = req.cookies;
 
     jwt.verify(token, secretKey, (error, decode) => {
       if (error) {

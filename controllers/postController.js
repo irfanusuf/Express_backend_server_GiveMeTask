@@ -87,7 +87,7 @@ const handleDeletePost = async (req, res) => {
 
 const handleLike = async (req, res) => {
   try {
-    const userId = req.user;
+    const userId = req.user;   // is authenticated handler req.user object next()
     const { _id } = req.params;
     const post = await Post.findById(_id);
 

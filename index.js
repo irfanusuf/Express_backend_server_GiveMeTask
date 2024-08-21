@@ -29,8 +29,7 @@ server.use(cookie())
 
 
 // api route for verifying token
-server.get("/token/verify/:token", verifyUser )
-
+server.get("/token/verify" , verifyUser )
 
 // api routes for user
 
@@ -39,33 +38,18 @@ server.post("/user/signup" , handleSignUp )
 server.post("/user/login" , handleLogin )
 
 //user authenticated Routes
-server.delete("/user/delete/:token" ,isAuthenticated, handleDelete )
-server.put("/user/edit/:token" ,isAuthenticated, handleEdit )
-server.get("/user/getUser/:token",isAuthenticated, handleGetUser )
-
-
-
+server.delete("/user/delete" ,isAuthenticated, handleDelete )
+server.put("/user/edit" ,isAuthenticated, handleEdit )
+server.get("/user/getUser",isAuthenticated, handleGetUser )
 
 // api routes for post
 
-
-server.post("/post/createPost/:token",isAuthenticated, multmid, handleCreatePost )
-
-server.post("/post/upload/image", multmid, uploadFile )
-
-server.get("/post/getAll", getAllPosts )
-
-server.get("/post/get/:_id", getPost )
-
-server.put("/post/pushLike/:_id/:token", isAuthenticated , handleLike )
-
-
-server.delete("/post/delete/:token/:_id",isAuthenticated, handleDeletePost )
-
-
-
-
-
+server.post("/post/createPost",isAuthenticated, multmid, handleCreatePost )
+server.post("/post/upload/image",isAuthenticated, multmid, uploadFile )
+server.get("/post/getAll",isAuthenticated ,getAllPosts )
+server.get("/post/get/:_id", isAuthenticated , getPost )
+server.put("/post/pushLike/:_id", isAuthenticated , handleLike )
+server.delete("/post/delete/:_id",isAuthenticated, handleDeletePost )
 
 server.listen(port, () => {
   console.log(`Server started on port ${port} !`);
