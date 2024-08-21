@@ -22,7 +22,12 @@ const server = express(); // inheritance
 
 connectDb();
 
-server.use(cors()); // middle ware
+server.use(cors({
+  origin: 'http://localhost:3000',  
+  credentials: true  
+}));
+
+// middle ware
 // server.use(express.json())  // json parsing
 server.use(bodyParser.json())
 server.use(cookie())
