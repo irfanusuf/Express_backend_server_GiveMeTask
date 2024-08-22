@@ -44,40 +44,27 @@ const handleLogin = async (req, res) => {
   try {
     const secretkey = process.env.SECRET_KEY;
     const { email, password } = req.body;
-
     if (email === "" || password === "") {
       return messagehandler(res, 202, "All credentails Required!");
     }
-
     const existingUser = await User.findOne({ email });
-
     if (!existingUser) {
       return messagehandler(res, 202, "No user Found");
     }
-
     const checkpass = await bcrypt.compare(password, existingUser.password);
-
     if (!checkpass) {
       return messagehandler(res, 202, "Password Incorrect");
     }
-
     const payload = existingUser._id;
-
     const token = await jwt.sign({ _id: payload }, secretkey);
-
     if (token) {
-    res.cookie("token" , token , {
-      httpOnly: true,  
-      secure: true,  
-      sameSite: 'None',
-      maxAge: 60* 60 * 60 * 1000,
-      path: '/'
-    } )
-
-      res
-        .status(200)
-        .json({ message: "user loggin success" });
-
+      res.cookie("token", token, {
+        maxAge: 60 * 60,
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+      });
+      res.status(200).json({ message: "user loggin success" });
     }
   } catch (error) {
     messagehandler(res, 500, "Server Error");
@@ -87,8 +74,7 @@ const handleLogin = async (req, res) => {
 
 const handleDelete = async (req, res) => {
   try {
-    const  _id  = req.user;
-
+    const _id = req.user;
     if (_id) {
       const checkUser = await User.findById(_id);
       if (checkUser) {
@@ -134,19 +120,17 @@ const handleEdit = async (req, res) => {
 
 const handleGetUser = async (req, res) => {
   try {
-    const _id  = req.user;
-    console.log(_id)
+    const _id = req.user;
+    console.log(_id);
     if (_id) {
       const user = await User.findById(_id);
-      const email =user.email
-      res
-        .status(200)
-        .json({ message: "User data fetched Succesfully", email });
-    }else{
+      const email = user.email;
+      res.status(200).json({ message: "User data fetched Succesfully", email });
+    } else {
       res.json({ message: "No User Data Found!" });
     }
   } catch (error) {
-    res.json({message : "Server Error"})
+    res.json({ message: "Server Error" });
     console.log(error);
   }
 };

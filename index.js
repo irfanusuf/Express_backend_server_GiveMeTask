@@ -23,7 +23,7 @@ const server = express(); // inheritance
 connectDb();
 
 server.use(cors({
-  origin: 'http://localhost:3000',  
+  origin: process.env.ORIGIN ,  
   credentials: true  
 }));
 
@@ -43,8 +43,8 @@ server.post("/user/signup" , handleSignUp )
 server.post("/user/login" , handleLogin )
 
 //user authenticated Routes
-server.delete("/user/delete" ,isAuthenticated, handleDelete )
-server.put("/user/edit" ,isAuthenticated, handleEdit )
+server.delete("/user/delete",isAuthenticated, handleDelete )
+server.put("/user/edit",isAuthenticated, handleEdit )
 server.get("/user/getUser",isAuthenticated, handleGetUser )
 
 // api routes for post
