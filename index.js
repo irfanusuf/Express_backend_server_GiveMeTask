@@ -23,7 +23,7 @@ const server = express(); // inheritance
 connectDb();
 
 server.use(cors({
-  origin: process.env.ORIGIN ,  
+  origin: true,  
   credentials: true  
 }));
 
@@ -41,7 +41,7 @@ server.get("/token/verify" , verifyUser )
 server.get("/" , (req,res)=>{res.send("Hello server is working!")})
 server.post("/user/signup" , handleSignUp )
 server.post("/user/login" , handleLogin )
-server.post("/verify/email/:_id" , verifyEmail )
+server.get("/verify/email/:_id" , verifyEmail )
 
 //user authenticated Routes
 server.delete("/user/delete",isAuthenticated, handleDelete )
