@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const cookie = require("cookie-parser")
 const connectDb = require("./utils/connectDb");
-const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser} = require("./controllers/userController");
+const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser, verifyEmail} = require("./controllers/userController");
 const {handleCreatePost, getAllPosts, handleDeletePost, getPost, handleLike} = require("./controllers/postController");
 const { uploadFile } = require("./controllers/uploadController");
 const bodyParser = require("body-parser");
@@ -41,6 +41,7 @@ server.get("/token/verify" , verifyUser )
 server.get("/" , (req,res)=>{res.send("Hello server is working!")})
 server.post("/user/signup" , handleSignUp )
 server.post("/user/login" , handleLogin )
+server.post("/verify/email/:_id" , verifyEmail )
 
 //user authenticated Routes
 server.delete("/user/delete",isAuthenticated, handleDelete )

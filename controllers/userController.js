@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { messagehandler } = require("../utils/utils");
+const transporter = require("../utils/nodemailer");
 const jwt = require("jsonwebtoken");
 const { config } = require("dotenv");
 config("/.env");
@@ -26,7 +27,18 @@ const handleSignUp = async (req, res) => {
           password: hashpass,
         });
         if (newUser) {
-          res.json({ message: "User Saved Succesfully" });
+      
+
+          const link = `https://algoacademy.onrender.com/verify/email/${newUser._id}`;
+          const data = `Your account has been registered with Us ... kindly click on the below link    ${link} to actiavte your account  and confirm you Email`;
+
+          await transporter.sendMail({
+            from: "irfanusuf33@gmail.com",
+            to: `${email}`,
+            subject: "Welecome Email",
+            text: data,
+          });
+          res.json({ message: "User Saved Succesfully " , mailsent : true });
         } else {
           res.json({ message: "Some Error" });
         }
@@ -135,10 +147,28 @@ const handleGetUser = async (req, res) => {
   }
 };
 
+const verifyEmail = async (req, res) => {
+  try {
+    const _id = req.params;
+    const user = await User.findById(_id);
+    if (user) {
+      await User.findByIdAndUpdate(_id, {
+        $push: {
+          isEmailVerified: true,
+        },
+      });
+      res.json({message : "Email verified"})
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   handleSignUp,
   handleLogin,
   handleDelete,
   handleEdit,
   handleGetUser,
+  verifyEmail,
 };
