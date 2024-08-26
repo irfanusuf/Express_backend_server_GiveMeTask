@@ -3,8 +3,6 @@ const bcrypt = require("bcrypt");
 const { messagehandler } = require("../utils/utils");
 const transporter = require("../utils/nodemailer");
 const jwt = require("jsonwebtoken");
-const path = require("path")
-const express = require("express");
 const { config } = require("dotenv");
 config("/.env");
 
@@ -40,6 +38,8 @@ const handleSignUp = async (req, res) => {
           subject: `Welecome ${username}`,
           text: data,
         });
+
+        console.log(mail)
 
         if (newUser && mail) {
           res.json({ message: "User Saved Succesfully " , mailsent : true });
