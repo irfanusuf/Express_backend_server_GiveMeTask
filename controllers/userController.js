@@ -29,8 +29,8 @@ const handleSignUp = async (req, res) => {
           password: hashpass,
         });
 
-        const baseUrl = "http://localhost:4000"
-        // const baseUrl = "https://algoacademy.onrender.com"
+        // const baseUrl = "http://localhost:4000"
+        const baseUrl = "https://algoacademy.onrender.com"
         const link = `${baseUrl}/verify/email/${newUser._id}`;
         const data = `Your account has been registered with Us ... kindly click on the below link    ${link} to actiavte your account  and confirm you Email`;
 
