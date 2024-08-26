@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookie = require("cookie-parser")
+const path =require("path")
 const connectDb = require("./utils/connectDb");
 const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser, verifyEmail} = require("./controllers/userController");
 const {handleCreatePost, getAllPosts, handleDeletePost, getPost, handleLike} = require("./controllers/postController");
@@ -31,6 +32,14 @@ server.use(cors({
 // server.use(express.json())  // json parsing
 server.use(bodyParser.json())
 server.use(cookie())
+server.use(express.static(path.join(__dirname, 'public')));
+
+
+// setting hbs engine   ,, default is html
+
+server.set("view engine" , "hbs")
+
+
 
 
 // api route for verifying token

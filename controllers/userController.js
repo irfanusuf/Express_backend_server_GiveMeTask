@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const { messagehandler } = require("../utils/utils");
 const transporter = require("../utils/nodemailer");
 const jwt = require("jsonwebtoken");
+const path = require("path")
+const express = require("express");
 const { config } = require("dotenv");
 config("/.env");
 
@@ -26,18 +28,20 @@ const handleSignUp = async (req, res) => {
           email,
           password: hashpass,
         });
-        if (newUser) {
-      
 
-          const link = `https://algoacademy.onrender.com/verify/email/${newUser._id}`;
-          const data = `Your account has been registered with Us ... kindly click on the below link    ${link} to actiavte your account  and confirm you Email`;
+        const baseUrl = "http://localhost:4000"
+        // const baseUrl = "https://algoacademy.onrender.com"
+        const link = `${baseUrl}/verify/email/${newUser._id}`;
+        const data = `Your account has been registered with Us ... kindly click on the below link    ${link} to actiavte your account  and confirm you Email`;
 
-          await transporter.sendMail({
-            from: "irfanusuf33@gmail.com",
-            to: `${email}`,
-            subject: "Welecome Email",
-            text: data,
-          });
+       const mail =  await transporter.sendMail({
+          from: "irfanusuf33@gmail.com",
+          to: `${email}`,
+          subject: `Welecome ${username}`,
+          text: data,
+        });
+
+        if (newUser && mail) {
           res.json({ message: "User Saved Succesfully " , mailsent : true });
         } else {
           res.json({ message: "Some Error" });
@@ -71,7 +75,7 @@ const handleLogin = async (req, res) => {
     const token = await jwt.sign({ _id: payload }, secretkey);
     if (token) {
       res.cookie("token", token, {
-        maxAge: 60 * 60,
+        maxAge: 1000*60*60*24*30,
         httpOnly: true,
         secure: true,
         sameSite: "None",
@@ -151,13 +155,14 @@ const verifyEmail = async (req, res) => {
   try {
     const _id = req.params;
     const user = await User.findById(_id);
+    
     if (user) {
       await User.findByIdAndUpdate(_id, {
-        $push: {
+       
           isEmailVerified: true,
-        },
+        
       });
-      res.json({message : "Email verified"})
+      res.render("index" , {title : "ALGO ACADEMY | Verify"})
     }
   } catch (error) {
     console.log(error);
