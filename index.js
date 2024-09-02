@@ -1,4 +1,6 @@
 const express = require("express");
+const http = require('http');
+const { Server } = require('socket.io');
 const cors = require("cors");
 const cookie = require("cookie-parser")
 const path =require("path")
@@ -10,8 +12,9 @@ const bodyParser = require("body-parser");
 const verifyUser = require("./controllers/userVerification");
 const isAuthenticated = require("./middlewares/auth");
 const multmid = require("./middlewares/multer");
-const { config } = require("dotenv");
 
+const { config } = require("dotenv");
+const { Message } = require("./models/messageModel");
 config("/.env")
 
 
@@ -19,52 +22,110 @@ const port = process.env.PORT;
  
 // you are creating an instance of express
 
-const server = express(); // inheritance
+const app = express(); // inheritance
+
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin:   true , //'http://localhost:3000', // Allow React app's origin
+    methods: ['GET', 'POST'],
+  },
+});
 
 connectDb();
 
-server.use(cors({
+app.use(cors({
   origin: true,  
   credentials: true  
 }));
 
+
+
+const users = {}; // Store online users and their socket IDs
+
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+
+  // Handle user registration and store socket ID
+  socket.on('register', (userId) => {
+    users[userId] = socket.id;
+    console.log(`User ${userId} registered with socket ID: ${socket.id}`);
+    io.emit('online_users', Object.keys(users)); // Send the updated list of online users to all clients
+ 
+  });
+
+  // Handle private messages
+  socket.on('private_message', async ({ senderId, recipientId, message }) => {
+    try {
+      // Save the message to the database
+      const newMessage = new Message({ sender: senderId, recipient: recipientId, message });
+      await newMessage.save();
+
+      // Send the message to the recipient if they are online
+      const recipientSocketId = users[recipientId];
+      if (recipientSocketId) {
+        io.to(recipientSocketId).emit('private_message', {
+          senderId,
+          message,
+        });
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('A user disconnected:', socket.id);
+    for (let userId in users) {
+      if (users[userId] === socket.id) {
+        delete users[userId];
+        break;
+      }
+    }
+
+    io.emit('online_users', Object.keys(users)); // Send the updated list of online users to all clients
+  });
+});
+
 // middle ware
 // server.use(express.json())  // json parsing
-server.use(bodyParser.json())
-server.use(cookie())
-server.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json())
+app.use(cookie())
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 // setting hbs engine   ,, default is html
 
-server.set("view engine" , "hbs")
+app.set("view engine" , "hbs")
 
 
 
 
 // api route for verifying token
-server.get("/token/verify" , verifyUser )
+app.get("/token/verify" , verifyUser )
 
 // api routes for user
 
-server.get("/" , (req,res)=>{res.send("Hello server is working!")})
-server.post("/user/signup" , handleSignUp )
-server.post("/user/login" , handleLogin )
-server.get("/verify/email/:_id" , verifyEmail )
+app.get("/" , (req,res)=>{res.send("Hello server is working!")})
+app.post("/user/signup" , handleSignUp )
+app.post("/user/login" , handleLogin )
+app.get("/verify/email/:_id" , verifyEmail )
 
 //user authenticated Routes
-server.delete("/user/delete",isAuthenticated, handleDelete )
-server.put("/user/edit",isAuthenticated, handleEdit )
-server.get("/user/getUser",isAuthenticated, handleGetUser )
+app.delete("/user/delete",isAuthenticated, handleDelete )
+app.put("/user/edit",isAuthenticated, handleEdit )
+app.get("/user/getUser",isAuthenticated, handleGetUser )
 
 // api routes for post
 
-server.post("/post/createPost",isAuthenticated, multmid, handleCreatePost )
-server.post("/post/upload/image",isAuthenticated, multmid, uploadFile )
-server.get("/post/getAll",isAuthenticated ,getAllPosts )
-server.get("/post/get/:_id", isAuthenticated , getPost )
-server.put("/post/pushLike/:_id", isAuthenticated , handleLike )
-server.delete("/post/delete/:_id",isAuthenticated, handleDeletePost )
+app.post("/post/createPost",isAuthenticated, multmid, handleCreatePost )
+app.post("/post/upload/image",isAuthenticated, multmid, uploadFile )
+app.get("/post/getAll",isAuthenticated ,getAllPosts )
+app.get("/post/get/:_id", isAuthenticated , getPost )
+app.put("/post/pushLike/:_id", isAuthenticated , handleLike )
+app.delete("/post/delete/:_id",isAuthenticated, handleDeletePost )
 
 server.listen(port, () => {
   console.log(`Server started on port ${port} !`);

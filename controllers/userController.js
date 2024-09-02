@@ -39,7 +39,7 @@ const handleSignUp = async (req, res) => {
           text: data,
         });
 
-        console.log(mail)
+        // console.log(mail)
 
         if (newUser && mail) {
           res.json({ message: "User Saved Succesfully " , mailsent : true });
@@ -137,11 +137,12 @@ const handleEdit = async (req, res) => {
 const handleGetUser = async (req, res) => {
   try {
     const _id = req.user;
-    console.log(_id);
+    // console.log(_id);
     if (_id) {
       const user = await User.findById(_id);
       const email = user.email;
-      res.status(200).json({ message: "User data fetched Succesfully", email });
+      const id = user._id
+      res.status(200).json({ message: "User data fetched Succesfully", email ,id });
     } else {
       res.json({ message: "No User Data Found!" });
     }
