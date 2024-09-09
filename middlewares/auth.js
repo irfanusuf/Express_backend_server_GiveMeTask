@@ -13,6 +13,7 @@ const isAuthenticated = (req, res, next) => {
         messagehandler(res, 401, "unauthorised");
       } else {
         req.user = decode._id;
+        messagehandler(res, 200, "verified");
         // console.log(req.user)
         return next();
       }

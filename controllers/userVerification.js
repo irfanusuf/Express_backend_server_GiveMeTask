@@ -10,10 +10,10 @@ const verifyUser = (req, res) => {
 
     jwt.verify(token, secretKey, (error, decode) => {
       if (error) {
-        messagehandler(res, 200 , "tokenNotVerfied");
+        messagehandler(res, 401 , "tokenNotVerfied");
       } else {
         res.json({ message: "verified", decode });
-      }
+      } 
     });
 
   } catch (error) {

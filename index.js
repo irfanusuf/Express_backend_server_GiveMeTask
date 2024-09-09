@@ -28,7 +28,7 @@ const app = express(); // inheritance
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin:  "https://give-metask.vercel.app" // Allow React app's origin
+    origin:  "https://give-metask.vercel.app", // Allow React app's origin
     methods: ['GET', 'POST'],
   },
 });
@@ -100,11 +100,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set("view engine" , "hbs")
 
-
-
-
 // api route for verifying token
-app.get("/token/verify" , verifyUser )
+app.get("/token/verify" , isAuthenticated )
 
 // api routes for user
 
