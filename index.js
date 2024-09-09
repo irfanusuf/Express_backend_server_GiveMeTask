@@ -101,7 +101,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set("view engine" , "hbs")
 
 // api route for verifying token
-app.get("/token/verify" , isAuthenticated )
+app.get("/token/verify" , verifyUser )
 
 // api routes for user
 

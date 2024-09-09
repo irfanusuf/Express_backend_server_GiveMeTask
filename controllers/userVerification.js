@@ -12,7 +12,7 @@ const verifyUser = (req, res) => {
       if (error) {
         messagehandler(res, 401 , "tokenNotVerfied");
       } else {
-        res.json({ message: "verified", decode });
+        res.json({ message: "verified"});
       } 
     });
 
