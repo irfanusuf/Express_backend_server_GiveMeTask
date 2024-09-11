@@ -89,32 +89,64 @@ const handleLike = async (req, res) => {
   try {
     const userId = req.user;   // is authenticated handler req.user object next()
     const { _id } = req.params;
+
     const post = await Post.findById(_id);
-
-    const likeArr = post.likes;
-
-    const alreadyLiked = likeArr.includes(userId);
 
     if (!post) {
       return messagehandler(res, 404, "Post Not Found!");
     }
 
-    if (alreadyLiked) {
-      await Post.findByIdAndUpdate(_id, {
-        $pull: {
-          likes: userId,
-        },
-      });
-      return messagehandler(res, 200, "Like Removed !");
-    } else {
-      await Post.findByIdAndUpdate(_id, {
-        $push: { likes: userId },
-      });
+    const alreadyLiked = await post.likes.findIndex(
+      (user) => user.user._id.toString() === userId
+      );
 
-      return messagehandler(res, 201, "U Liked Succesfully!");
-    }
+      // await post.likes.push({ user: userId }); 
+      // simple javascript array method
+
+      // await User.findByIdAndUpdate(userId, { $push: { likedPosts: postId } });
+      // method of mongoose
+
+
+      if(alreadyLiked === -1){
+
+        await post.likes.push({user : userId})
+        await post.save()
+        return messagehandler(res , 201 , "Liked!")
+
+      }
+
+      else if(alreadyLiked > -1){
+        await post.likes.splice(alreadyLiked , 1)
+        await post.save()
+        return messagehandler(res , 200 , "Like Removed!")
+      }
+    
+
+
+
+    // if (alreadyLiked === 1) {
+    //   await Post.findByIdAndUpdate(_id, {
+    //     $pull: {
+    //       likes: userId,
+    //     },
+    //   });
+    //   return messagehandler(res, 200, "Like Removed !");
+
+
+     
+
+
+    // } else {
+    //   await Post.findByIdAndUpdate(_id, {
+    //     $push: { likes: userId },
+    //   });
+
+    //   return messagehandler(res, 201, "U Liked Succesfully!");
+    // }
   } catch (error) {
+    
     console.log(error);
+    messagehandler(res , 500 , "Internal Server Error")
   }
 };
 

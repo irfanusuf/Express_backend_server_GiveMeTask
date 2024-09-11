@@ -28,7 +28,7 @@ const app = express(); // inheritance
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin:  "https://give-metask.vercel.app" // Allow React app's origin
+    origin:  "https://give-metask.vercel.app" ,// Allow React app's origin
     methods: ['GET', 'POST'],
   },
 });

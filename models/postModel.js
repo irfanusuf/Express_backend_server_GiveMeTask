@@ -14,8 +14,15 @@ const Post = mongoose.model("Post", {
       },
     },
   ],
-  likes: [{ type: String} ],
-  dislike: [],
+
+  likes: [{
+    user : {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "User"
+    }
+  } ],
+
+ 
   share: [],
 });
 
