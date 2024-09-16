@@ -5,7 +5,7 @@ const cors = require("cors");
 const cookie = require("cookie-parser")
 const path =require("path")
 const connectDb = require("./utils/connectDb");
-const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser, verifyEmail} = require("./controllers/userController");
+const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser, verifyEmail ,handleGetAllUsers}  = require("./controllers/userController");
 const {handleCreatePost, getAllPosts, handleDeletePost, getPost, handleLike} = require("./controllers/postController");
 const { uploadFile } = require("./controllers/uploadController");
 const bodyParser = require("body-parser");
@@ -114,6 +114,7 @@ app.get("/verify/email/:_id" , verifyEmail )
 app.delete("/user/delete",isAuthenticated, handleDelete )
 app.put("/user/edit",isAuthenticated, handleEdit )
 app.get("/user/getUser",isAuthenticated, handleGetUser )
+app.get("/user/getAllUsers",isAuthenticated, handleGetAllUsers )
 
 // api routes for post
 
