@@ -6,7 +6,7 @@ const cookie = require("cookie-parser")
 const path =require("path")
 const connectDb = require("./utils/connectDb");
 const { handleSignUp, handleLogin , handleDelete ,handleEdit , handleGetUser, verifyEmail ,handleGetAllUsers}  = require("./controllers/userController");
-const {handleCreatePost, getAllPosts, handleDeletePost, getPost, handleLike} = require("./controllers/postController");
+const {handleCreatePost, getAllPosts, handleDeletePost, getPost, handleLike, editPost} = require("./controllers/postController");
 const { uploadFile } = require("./controllers/uploadController");
 const bodyParser = require("body-parser");
 const verifyUser = require("./controllers/userVerification");
@@ -122,6 +122,7 @@ app.post("/post/createPost",isAuthenticated, multmid, handleCreatePost )
 app.post("/post/upload/image",isAuthenticated, multmid, uploadFile )
 app.get("/post/getAll",isAuthenticated ,getAllPosts )
 app.get("/post/get/:_id", isAuthenticated , getPost )
+app.put("/post/edit/:_id", isAuthenticated ,multmid , editPost )
 app.put("/post/pushLike/:_id", isAuthenticated , handleLike )
 app.delete("/post/delete/:_id",isAuthenticated, handleDeletePost )
 
