@@ -164,10 +164,6 @@ const handleGetAllUsers = async (req, res) => {
   }
 };
 
-
-
-
-
 const verifyEmail = async (req, res) => {
   try {
     const _id = req.params;
@@ -194,5 +190,4 @@ module.exports = {
   handleGetUser,
   handleGetAllUsers,
   verifyEmail,
-  
 };

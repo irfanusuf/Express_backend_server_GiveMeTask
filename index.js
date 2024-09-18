@@ -1,6 +1,6 @@
 const express = require("express");
 const http = require('http');
-const { Server } = require('socket.io');
+;
 const cors = require("cors");
 const cookie = require("cookie-parser")
 const path =require("path")
@@ -15,6 +15,7 @@ const multmid = require("./middlewares/multer");
 
 const { config } = require("dotenv");
 const { Message } = require("./models/messageModel");
+const { socketIo } = require("./utils/socket.io");
 config("/.env")
 
 
@@ -23,15 +24,9 @@ const port = process.env.PORT;
 // you are creating an instance of express
 
 const app = express(); // inheritance
-
-
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin:  "https://give-metask.vercel.app" ,// Allow React app's origin
-    methods: ['GET', 'POST'],
-  },
-});
+
+socketIo(server)
 
 connectDb();
 
@@ -42,52 +37,7 @@ app.use(cors({
 
 
 
-const users = {}; // Store online users and their socket IDs
 
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
-
-  // Handle user registration and store socket ID
-  socket.on('register', (userId) => {
-    users[userId] = socket.id;
-    console.log(`User ${userId} registered with socket ID: ${socket.id}`);
-    io.emit('online_users', Object.keys(users)); // Send the updated list of online users to all clients
- 
-  });
-
-  // Handle private messages
-  socket.on('private_message', async ({ senderId, recipientId, message }) => {
-    try {
-      // Save the message to the database
-      const newMessage = new Message({ sender: senderId, recipient: recipientId, message });
-      await newMessage.save();
-
-      // Send the message to the recipient if they are online
-      const recipientSocketId = users[recipientId];
-      if (recipientSocketId) {
-        io.to(recipientSocketId).emit('private_message', {
-          senderId,
-          message,
-        });
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
-  });
-
-  // Handle disconnection
-  socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
-    for (let userId in users) {
-      if (users[userId] === socket.id) {
-        delete users[userId];
-        break;
-      }
-    }
-
-    io.emit('online_users', Object.keys(users)); // Send the updated list of online users to all clients
-  });
-});
 
 // middle ware
 // server.use(express.json())  // json parsing
