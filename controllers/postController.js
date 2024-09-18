@@ -24,7 +24,7 @@ const handleCreatePost = async (req, res) => {
     const image = req.file.path; // file object is added to req param by multer
 
     if (title === "" || content === "" || !image) {
-      return messagehandler(res, 203, "All Data feilds Required");
+      return messagehandler(res, 400, "All Data feilds Required");
     }
 
     const upload = await cloudinary.uploader.upload(image);
@@ -39,7 +39,7 @@ const handleCreatePost = async (req, res) => {
 
     const newPost = await Post.create({ title, imageUrl, author, content });
     if (newPost) {
-      return messagehandler(res, 201, "Post created Succesfully!");
+      return messagehandler(res, 201, `Post ${newPost._id} created Succesfully!`);
     }
   } catch (error) {
     console.log(error);
@@ -78,11 +78,55 @@ const getPost = async (req, res) => {
   }
 };
 
+
+const editPost = async(req,res) =>{
+  try {
+
+    const { _id } = req.params;
+    const { title, content } = req.body; 
+    const image = req.file.path; 
+
+    if (title === "" || content === "" || !image) {
+      return messagehandler(res, 400, "All Data feilds Required!");
+    }
+
+    const upload = await cloudinary.uploader.upload(image);
+
+    if (!upload) {
+      return messagehandler(res, 500, "Cloudinary Error");
+    }
+
+    // console.log(upload);
+
+    const imageUrl = upload.secure_url;
+
+    const updatePost = await Post.findByIdAndUpdate(_id , {
+      title ,
+      content,
+      imageUrl
+    },{ new: true } )
+
+    if(updatePost) {
+     return messagehandler(res,201,`Post ${_id} Updated SucessFully!`)
+    }
+  } catch (error) {
+    console.log(error)
+    return messagehandler(res,500 ,"Internal Server Error")
+    
+  }
+}
+
 const handleDeletePost = async (req, res) => {
   try {
-    const _id = req.params;
+    const {_id} = req.params;
     const delPost = await Post.findByIdAndDelete(_id);
-  } catch (error) {}
+    if(delPost){
+      messagehandler(res,200 ,` Deleted Post ${_id}!`)
+    }
+  } catch (error) {
+    console.log(error)
+    return messagehandler(res,500 ,"Internal Server Error")
+  }
 };
 
 const handleLike = async (req, res) => {
@@ -152,8 +196,9 @@ const handleLike = async (req, res) => {
 
 module.exports = {
   handleCreatePost,
-  getAllPosts,
   handleDeletePost,
+  getAllPosts,
   getPost,
+  editPost,
   handleLike,
 };

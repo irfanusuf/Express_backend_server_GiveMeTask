@@ -36,9 +36,6 @@ app.use(cors({
 }));
 
 
-
-
-
 // middle ware
 // server.use(express.json())  // json parsing
 app.use(bodyParser.json())
